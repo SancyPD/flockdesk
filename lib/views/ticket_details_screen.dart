@@ -524,7 +524,12 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.white, // background color (optional)
@@ -560,20 +565,18 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 12.0),
                                 child: Text(
-                                  _cleanTicketTitle(
-                                    _ticketDetails!.ticketTitle,
+                                    '${_cleanTicketTitle(_ticketDetails!.ticketTitle)} - #${widget.ticketId}',
+                                    style: const TextStyle(
+                                      color: Color(0xFF313131),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                    maxLines: _isSenderDetailsVisible ? 10 : 1,
+                                    overflow: _isSenderDetailsVisible
+                                        ? TextOverflow.visible
+                                        : TextOverflow.ellipsis,
+                                    softWrap: true, // wrap to next line
                                   ),
-                                  style: const TextStyle(
-                                    color: Color(0xFF313131),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                  ),
-                                  maxLines: 10,
-                                  // allow multiple lines
-                                  overflow: TextOverflow.visible,
-                                  // don’t ellipsize
-                                  softWrap: true, // wrap to next line
-                                ),
                               ),
                             ),
                             widget.fromTrash
@@ -640,72 +643,19 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                     vertical: 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF5F5F5),
+                                    color: const Color(0xFFFFFFFF),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: const Color(0xFFEFEFEF),
+                                      color: const Color(0xFFECECEC),
                                     ),
                                   ),
                                   child: Text(
                                     _ticketDetails!.contactDetails.emailId,
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black87,
+                                      color:const Color(0xFF454545) ,
                                       fontWeight: FontWeight.w500,
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // Avatar and name section
-                                Expanded(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: Colors.blue[100],
-                                        child: Text(
-                                          _ticketDetails!
-                                                  .contactDetails
-                                                  .contactName
-                                                  .isNotEmpty
-                                              ? _ticketDetails!
-                                                    .contactDetails
-                                                    .contactName[0]
-                                                    .toUpperCase()
-                                              : 'U',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          _ticketDetails!
-                                              .contactDetails
-                                              .contactName,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // Ticket ID
-                                Text(
-                                  '#${widget.ticketId}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
@@ -787,42 +737,44 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                       //     height: 1.3,
                       //   ),
                       // ),
-
-                      // Horizontal line with clickable arrow and edit button
-                      Row(
-                        children: [
-                          // Clickable arrow button
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isSenderDetailsVisible =
-                                    !_isSenderDetailsVisible;
-                              });
-                            },
-                            child: Image.asset(
-                              _isSenderDetailsVisible
-                                  ? 'assets/images/up_arrow_detail.png'
-                                  : 'assets/images/down_arrow_detail.png',
-                              width: 36,
-                              height: 36,
-                            ),
-                          ),
-                          // Horizontal line
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10),
-                              height: 1,
-                              color: const Color(0xFFEAEAEA),
-                            ),
+                      const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isSenderDetailsVisible = !_isSenderDetailsVisible;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 16),
-                    ],
+                      child: Image.asset(
+                        _isSenderDetailsVisible
+                            ? 'assets/images/up_arrow_detail.png'
+                            : 'assets/images/down_arrow_detail.png',
+                        width: 36,
+                        height: 36,
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(height: 16),
+              ],
+            ),
+                const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, bottom: 10),
                   child: const Text(
